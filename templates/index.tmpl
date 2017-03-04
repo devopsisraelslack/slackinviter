@@ -15,14 +15,14 @@
         <p class="status"><b class="active">{{.ActiveCount}}</b> users online now of
         <b class="total">{{.UserCount}}</b> registered.</p>
         <form>
-            <input autofocus="true" class="form-item" name="email" placeholder=
-            "you@yourdomain.com" type="email"><input autofocus="true" class=
-            "form-item" name="fname" placeholder="First name" type=
-            "text"><input autofocus="true" class="form-item" name="lname"
-            placeholder="Last name" type="text">
+            <input autofocus="true" class="form-item" name="email" placeholder="you@yourdomain.com" type="email">
+            <input autofocus="true" class="form-item" name="fname" placeholder="First name" type="text">
+            <input autofocus="true" class="form-item" name="lname" placeholder="Last name" type="text">
+            <input autofocus="true" class="form-item" name="title" placeholder="Job Title" type="text">
+            <input autofocus="true" class="form-item" name="company" placeholder="Company" type="text">
             <div class="coc">
                 <label><input name="coc" type="checkbox" value="1">I agree to
-                the <a href="http://coc.golangbridge.org/" target="_blank">Code
+                the <a href="{{.CocUrl}}" target="_blank">Code
                 of Conduct</a>.</label>
             </div><br>
             <div class="g-recaptcha" data-sitekey="{{.SiteKey}}"></div>
