@@ -4,7 +4,7 @@
 
 This is a [slackin](https://github.com/rauchg/slackin) clone written in Go because... Node.js bloat and Go is much nicer :-)
 
-Install or update with `go get -u github.com/devopsisraelslack/slackinviter`. Run `slackinviter` with `-h` for help, it just takes [recaptcha secret + sitekey](https://www.google.com/recaptcha/admin) + [slack api token](https://api.slack.com/custom-integrations/legacy-tokens) + [a slack channel id (for invites logging)](https://api.slack.com/methods/channels.list/test) + CodeOfConduct page URL as parameter, and listenAddr.
+Install or update with `go get -u github.com/devopsisraelslack/slackinviter`. Run `slackinviter` with `-h` for help, it just takes [recaptcha secret + sitekey](https://www.google.com/recaptcha/admin) + [slack api token](https://api.slack.com/custom-integrations/legacy-tokens) + [a slack channel id (for invites logging)](https://api.slack.com/methods/channels.list/test) + [CodeOfConduct page URL](https://github.com/devopsisraelslack/code-of-conduct) as parameters, and listenAddr.
 
 See https://cognitive.io/post/rewriting-the-gophers-invite-form-in-go/ to understand why I decided to rewrite Slackin in Go.
 
