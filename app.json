@@ -4,12 +4,16 @@
   "logo": "https://i.imgur.com/8mRVeMn.png",
   "keywords": ["go", "slack"],
   "image": "heroku/go:1.6",
-  "mount_dir": "http://github.com/flexd/slackinviter",
-  "website": "https://github.com/flexd/slackinviter",
-  "repository": "https://github.com/flexd/slackinviter",
+  "mount_dir": "http://github.com/devopsisraelslack/slackinviter",
+  "website": "https://github.com/devopsisraelslack/slackinviter",
+  "repository": "https://github.com/devopsisraelslack/slackinviter",
   "env": {
     "SLACKINVITER_SLACKTOKEN": {
       "description": "A Slack API token (find it on https://api.slack.com/web)",
+      "required": true
+    },
+    "SLACKINVITER_SLACKINVITESCHANNELID": {
+      "description": "A Private Channel id where new invites log is posted to",
       "required": true
     },
     "SLACKINVITER_CAPTCHASITEKEY": {
@@ -18,6 +22,10 @@
     },
     "SLACKINVITER_CAPTCHASECRET": {
       "description": "Recaptcha secret key",
+      "required": true
+    },
+    "SLACKINVITER_CODEOFCONDUCTURL": {
+      "description": "a link to your desired code of conduct page",
       "required": true
     }
   }

@@ -26,12 +26,18 @@ var (
 
 	ourTeam = new(team)
 
+	slackInviteMessage string
+
+
 	m *expvar.Map
 	hitsPerMinute,
 	requests,
 	inviteErrors,
+	slackMessageErrors,
 	missingFirstName,
 	missingLastName,
+	missingTitle,
+	missingCompany,
 	missingEmail,
 	missingCoC,
 	successfulCaptcha,
@@ -50,6 +56,8 @@ type Specification struct {
 	CaptchaSitekey string `required:"true"`
 	CaptchaSecret  string `required:"true"`
 	SlackToken     string `required:"true"`
+	SlackInvitesChannelId   string `required:"true"`
+	CodeOfConductUrl  string `required:"true"`
 	EnforceHTTPS   bool
 }
 
@@ -63,8 +71,11 @@ func init() {
 	m.Set("hits_per_minute", &hitsPerMinute)
 	m.Set("requests", &requests)
 	m.Set("invite_errors", &inviteErrors)
+	m.Set("slack_message_errors", &slackMessageErrors)
 	m.Set("missing_first_name", &missingFirstName)
 	m.Set("missing_last_name", &missingLastName)
+	m.Set("missing_title", &missingTitle)
+	m.Set("missing_company", &missingCompany)
 	m.Set("missing_email", &missingEmail)
 	m.Set("missing_coc", &missingCoC)
 	m.Set("failed_captcha", &failedCaptcha)
@@ -155,11 +166,13 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 		struct {
 			SiteKey,
 			UserCount,
+                        CocUrl,
 			ActiveCount string
 			Team *team
 		}{
 			c.CaptchaSitekey,
 			userCount.String(),
+                        c.CodeOfConductUrl,
 			activeUserCount.String(),
 			ourTeam,
 		},
@@ -203,6 +216,8 @@ func handleInvite(w http.ResponseWriter, r *http.Request) {
 	successfulCaptcha.Add(1)
 	fname := r.FormValue("fname")
 	lname := r.FormValue("lname")
+	title := r.FormValue("title")
+	company := r.FormValue("company")
 	email := r.FormValue("email")
 	coc := r.FormValue("coc")
 	if email == "" {
@@ -220,6 +235,16 @@ func handleInvite(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing last name", http.StatusPreconditionFailed)
 		return
 	}
+	if title == "" {
+		missingTitle.Add(1)
+		http.Error(w, "Missing Title", http.StatusPreconditionFailed)
+		return
+	}
+	if company == "" {
+		missingCompany.Add(1)
+		http.Error(w, "Missing Company Name (enter unemployed/freelance/other if needed)", http.StatusPreconditionFailed)
+		return
+	}
 	if coc != "1" {
 		missingCoC.Add(1)
 		http.Error(w, "You need to accept the code of conduct", http.StatusPreconditionFailed)
@@ -231,6 +256,20 @@ func handleInvite(w http.ResponseWriter, r *http.Request) {
 		inviteErrors.Add(1)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
+	} else {
+        log.Println("invited : ", email, fname, lname, title, company)
+	slackInviteMessage = "Successfully Invited: (fname) " + fname + " (lname)  " + lname + " (Title) " + title + " (Company) " + company + " (email) " + email
+        slackParams := slack.PostMessageParameters{}
+        slackParams.Username = "slackinviter"
+	channelID, timestamp, err := api.PostMessage(c.SlackInvitesChannelId, slackInviteMessage, slackParams)
+	if err != nil {
+                log.Println("MessageToSlack error:", err)
+                slackMessageErrors.Add(1)
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+        } else {
+        log.Println("Message Sent : ", channelID, timestamp)
+        }
+        }
 	successfulInvites.Add(1)
 }
